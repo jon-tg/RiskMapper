@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'Autography';
+  src: url('./assets/fonts/Autography.otf');
+}
+
+@font-face {
+  font-family: 'Baby';
+  src: url('./assets/fonts/Baby\ Doll.ttf');
+}
+
+
+
+
+#title {
+  font-family: 'Autography';
+}
+
+#ip-form {
+  font-family: 'Baby';
+}

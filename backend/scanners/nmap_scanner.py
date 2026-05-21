@@ -2,7 +2,7 @@ import nmap
 
 def scan_host(target: str):
     nm = nmap.PortScanner()
-    nm.scan(target, arguments="-sV")
+    nm.scan(target, arguments="-T4 -F")
 
     results = []
 
