@@ -12,12 +12,11 @@ function App() {
   const scanVulnerability = async (ip) => {
     try {
       console.log("Trying");
-      const response = await fetch("http://localhost:8000/scan/", {
+
+      const response = await fetch("http://127.0.0.1:8000/scan/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ip }),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({target: ip}),
       });
 
       console.log("API Hit");
@@ -49,24 +48,26 @@ function App() {
 
   return (
     <>
-      <section id="center">
-        <div class="flex flex-col w-[100%] h-[80vh] justify-center ">
-          <div class=''>
-          <h1 id='title' class=' text-[100px] text-center'>Risk Mapper</h1>
-          </div>
-          <div>
-            <form id='ip-form' class='text-center text-[30px]' onSubmit={handleSubmit}>
-              <label for='ip' >Target IP: </label>
-              <input
-                id="ip"
-                type="text"
-                name="text"
-                className="border border-red-800 pl-4 w-[170px] rounded-[200px]"
-                value={ip}
-                onChange={(e) => setIp(e.target.value)}
-            />
-              <br/><br/>
-              <button type='submit' class='border'>Submit</button>
+      <section id="homepage">
+        <div class="flex flex-col ml-[20vw] w-[60%] h-[30vh]">
+          <div class='mt-[5vh]'>
+          <h1 id='title' class='text-[55px] '>Risk Mapper</h1>
+        </div>
+          <div class='border-t-[2px] '>
+            <form id='ip-form' class='mt-[2vh] text-[30px]' onSubmit={handleSubmit}>
+              <div className='flex-col'>
+                <div class='mb-[-.5vh]'>
+                <label for='ip' >Target IP: </label>
+                <input
+                  id="ip"
+                  type="text"
+                  name="text"
+                  className=" gray-input pl-4 w-[170px] text-[30px] h-[40px] rounded-[200px]"
+                  value={ip}
+                onChange={(e) => setIp(e.target.value)}/>
+                </div>
+              <button type='submit' class='ml-[5vw] tracking-[2px] text-[30px]'>Submit</button>
+              </div>
             </form>
           </div>
           

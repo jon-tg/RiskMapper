@@ -4,17 +4,46 @@
 }
 
 @font-face {
-  font-family: 'Baby';
-  src: url('./assets/fonts/Baby\ Doll.ttf');
+  font-family: 'Eternalo';
+  src: url('./assets/fonts/Eternalo.ttf');
+}
+
+@font-face {
+  font-family: 'Worldstar';
+  src: url('./assets/fonts/Worldstar.ttf');
+}
+
+@font-face {
+  font-family: 'Apple';
+  src: url('./assets/fonts/AppleGaramond.ttf');
 }
 
 
-
+#homepage {
+  background-color: rgb(243, 243, 243);
+  height: 100vh;
+}
 
 #title {
-  font-family: 'Autography';
+  font-family: 'Eternalo';
 }
 
 #ip-form {
-  font-family: 'Baby';
+  font-family: 'Worldstar';
+}
+
+.gray-input {
+  width: 100%;
+  max-width: 200px;
+  padding: 9px 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  background-color: #fafafa;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.gray-input:focus {
+  background-color: #fff;
+  border-color: #a8a8a8;
 }
