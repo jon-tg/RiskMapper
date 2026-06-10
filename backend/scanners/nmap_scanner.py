@@ -28,7 +28,9 @@ def scan_host(target: str):
 
         os_matches = []
         if "osmatch" in host_data:
-            for match in host_data["osmatch"]:
+            host_data_top3 = host_data["osmatch"][:3]
+            
+            for match in host_data_top3:
                 os_matches.append({
                     "name": match.get("name"),
                     "accuracy": match.get("accuracy")
