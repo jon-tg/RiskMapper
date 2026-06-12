@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.scan_routes import router as scan_router
+from api.scan_risks import router as risk_router
 
 app = FastAPI(title="Risk Mapper")
 
@@ -13,3 +14,4 @@ app.add_middleware(
 )
 
 app.include_router(scan_router)
+app.include_router(risk_router)
