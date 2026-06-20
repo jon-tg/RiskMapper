@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'Autography';
+  src: url('./assets/fonts/Autography.otf');
+}
+
+@font-face {
+  font-family: 'Eternalo';
+  src: url('./assets/fonts/Eternalo.ttf');
+}
+
+@font-face {
+  font-family: 'Worldstar';
+  src: url('./assets/fonts/Worldstar.ttf');
+}
+
+@font-face {
+  font-family: 'Apple';
+  src: url('./assets/fonts/AppleGaramond.ttf');
+}
+
+html, body, #root {
+  min-height: 100%;
+  margin: 0;
+}
+
+
+#homepage {
+  background-color: rgb(243, 243, 243);
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.page {
+  flex-grow: 1;
+}
+
+#title {
+  font-family: 'Eternalo';
+}
+
+#ip-form{
+  font-family: 'Apple';
+}
+
+#scan-results {
+  font-family: 'Apple';
+}
+
+.gray-input {
+  width: 100%;
+  max-width: 200px;
+  padding: 9px 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  background-color: #fafafa;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.gray-input:focus {
+  background-color: #fff;
+  border-color: #a8a8a8;
+}
+
+.submit-button:hover {
+  background-color: #d2edfa;
+}
