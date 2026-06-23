@@ -1,64 +1,68 @@
+import sqlite3
+import json
 import requests
+from datetime import datetime, timedelta
 import time
 
+DB_NAME = "riskmapper.db"
+CACHE_DAYS = 7
 
 NVD_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
+def init_cve_cache():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
 
-def scan_risk(target: dict):
-    risk_results = []
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS cve_cache (
+            query TEXT PRIMARY KEY,
+            results TEXT NOT NULL,
+            cached_at TEXT NOT NULL
+        )
+    """)
 
-    for port in target.get("ports", []):
-        query = build_cve_query(port)
+    conn.commit()
+    conn.close()
 
-        if not query:
-            cves = []
-        else:
-            cves = search_cves(query)
+def get_cached_cves(query: str):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
 
-        print(cves)
-            
-        risk_results.append({
-            "port": port.get("port"),
-            "protocol": port.get("protocol"),
-            "service": port.get("service"),
-            "product": port.get("product"),
-            "version": port.get("version"),
-            "cves": cves,
-        })
+    cursor.execute("""
+        SELECT results, cached_at
+        FROM cve_cache
+        WHERE query = ?
+    """, (query,))
 
-        print(risk_results)
+    row = cursor.fetchone()
+    conn.close()
 
-        time.sleep(3)
+    if not row:
+        return None
 
-    return {
-        "host": target.get("host"),
-        "ports": risk_results,
-    }
+    results_json, cached_at = row
+    cached_time = datetime.fromisoformat(cached_at)
 
-def search_cves(query: str):
-    if not query:
-        return []
+    if datetime.now() - cached_time > timedelta(days=CACHE_DAYS):
+        return None
 
-    params = {
-        "keywordSearch": query,
-        "resultsPerPage": 5,
-    }
+    return json.loads(results_json)
 
-    response = requests.get(NVD_URL, params=params)
+def save_cves_to_cache(query: str, results):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
 
-    if response.status_code == 429:
-        print("Rate limited:", query)
-        return []
+    cursor.execute("""
+        INSERT OR REPLACE INTO cve_cache (query, results, cached_at)
+        VALUES (?, ?, ?)
+    """, (
+        query,
+        json.dumps(results),
+        datetime.now().isoformat(timespec="seconds")
+    ))
 
-    if response.status_code == 404:
-        print("No results:", query)
-        return []
-
-    response.raise_for_status()
-    data = response.json()
-
-    return simplify_cves(data.get("vulnerabilities", []))
+    conn.commit()
+    conn.close()
 
 def build_cve_query(port: dict):
     service = port.get("service", "")
@@ -82,6 +86,65 @@ def build_cve_query(port: dict):
         return service
 
     return None
+
+def scan_risk(target: dict):
+    risk_results = []
+
+    for port in target.get("ports", []):
+        query = build_cve_query(port)
+
+        if not query:
+            cves = []
+        else:
+            cves = search_cves(query)
+            
+        risk_results.append({
+            "port": port.get("port"),
+            "protocol": port.get("protocol"),
+            "service": port.get("service"),
+            "product": port.get("product"),
+            "version": port.get("version"),
+            "cves": cves,
+        })
+
+        time.sleep(3)
+
+    return {
+        "host": target.get("host"),
+        "ports": risk_results,
+    }
+
+def search_cves(query: str):
+    if not query:
+        return []
+
+    cached = get_cached_cves(query)
+    if cached is not None:
+        print("Using cached CVEs:", query)
+        return cached
+
+    params = {
+        "keywordSearch": query,
+        "resultsPerPage": 5,
+    }
+
+    response = requests.get(NVD_URL, params=params)
+
+    if response.status_code == 429:
+        print("Rate limited:", query)
+        return []
+
+    if response.status_code == 404:
+        print("No results:", query)
+        return []
+
+    response.raise_for_status()
+    data = response.json()
+
+    results = simplify_cves(data.get("vulnerabilities", []))
+    save_cves_to_cache(query, results)
+
+    return results
 
 def simplify_cves(vulnerabilities):
     simplified = []
