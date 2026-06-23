@@ -53,10 +53,6 @@ Create and activate a virtual environment.
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 Install dependencies:
 
 ```bash
